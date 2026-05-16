@@ -690,4 +690,89 @@ function renderPortfolio(srcLabel) {
   pnlEl.textContent = (pos?'+':'') + fmt(pnl) + ' 円';
   pnlEl.className   = 'metric-value ' + (pos?'pos':'neg');
   pctEl.textContent = (pos?'+':'') + pct.toFixed(2) + '%';
-  pctEl
+  pctEl.className   = 'metric-sub ' + (pos?'pos':'neg');
+
+  document.getElementById('holdings-rows').innerHTML = rowsHtml;
+  document.getElementById('donut-val').textContent = '¥' + fmt(totalJPY);
+
+  const chartData = ASSET_CATS.map(cat => ({
+    label: cat.label,
+    valJPY: catTotals[cat.id],
+    color: cat.color
+  }));
+
+  renderDonut(chartData);
+
+  document.getElementById('legend').innerHTML = chartData.map(r => {
+    const p = totalJPY > 0 ? ((r.valJPY/totalJPY)*100).toFixed(1) : 0;
+    return `<div class="legend-item">
+      <div class="legend-top">
+        <span class="legend-sym" style="color:${r.color}">${r.label}</span>
+        <span class="legend-pct">${p}%</span>
+      </div>
+      <div class="legend-bar-bg"><div class="legend-bar-fill" style="width:${p}%;background:${r.color}"></div></div>
+      <div class="legend-amt">¥${fmt(r.valJPY)}</div>
+    </div>`;
+  }).join('');
+
+  addHistory(totalJPY, totalCost, portfolioData.FX);
+}
+
+function renderDonut(chartData) {
+  if (chart) { chart.destroy(); chart = null; }
+  chart = new Chart(document.getElementById('donutChart'), {
+    type:'doughnut',
+    data:{
+      labels: chartData.map(r => r.label),
+      datasets:[{data:chartData.map(r => r.valJPY), backgroundColor:chartData.map(r => r.color), borderWidth:0, hoverOffset:5}]
+    },
+    options:{responsive:true, maintainAspectRatio:true, cutout:'72%',
+      plugins:{legend:{display:false},tooltip:{enabled:false}},
+      animation:{animateRotate:true,duration:800}}
+  });
+}
+
+function addHistory(totalJPY, totalCost, fx) {
+  const now = new Date();
+  const pnl = totalJPY - totalCost;
+  const timeStr = now.toLocaleDateString('ja-JP',{month:'2-digit',day:'2-digit'}) + ' '
+                + now.toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});
+  
+  if (hist.length > 0 && hist[0].time.startsWith(timeStr.split(' ')[0]) && hist[0].totalJPY === totalJPY) return; 
+
+  hist.unshift({ time: timeStr, totalJPY, totalCost, pnl, fx });
+  if (hist.length > 20) hist.pop();
+  localStorage.setItem(HIST_KEY, JSON.stringify(hist));
+  
+  document.getElementById('history-section').style.display = 'block';
+  renderHistoryRows();
+}
+
+function renderHistoryRows() {
+  document.getElementById('history-body').innerHTML = hist.map(h => {
+    const pos = h.pnl >= 0;
+    return `<tr>
+      <td style="color:var(--text-dim);white-space:nowrap">${h.time}</td>
+      <td>¥${fmt(h.totalJPY)}</td>
+      <td>¥${fmt(h.totalCost)}</td>
+      <td class="${pos?'pnl-pos':'pnl-neg'}">${pos?'+':''}${fmt(h.pnl)} 円</td>
+      <td>${h.fx.toFixed(2)}</td>
+    </tr>`;
+  }).join('');
+}
+
+function clearHistory() {
+  if(confirm('取得履歴をすべて削除しますか？')) {
+    hist = [];
+    localStorage.removeItem(HIST_KEY);
+    document.getElementById('history-body').innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-dim);padding:16px">まだ記録がありません</td></tr>';
+  }
+}
+
+initData();
+initHistory();
+renderPortfolio('キャッシュ復元');
+document.getElementById('stamp').textContent = '— 自動取得 または 編集モード を選択 —';
+</script>
+</body>
+</html>
