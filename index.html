@@ -76,7 +76,7 @@
   .mode-label { font-family:var(--font-mono); font-size:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.1em; }
   .toggle-wrap { display:flex; background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:3px; gap:2px; }
   .toggle-btn {
-    padding:6px 16px; border:1px solid transparent; border-radius:6px;
+    padding:6px 18px; border:1px solid transparent; border-radius:6px;
     background:transparent; color:var(--text-muted);
     font-family:var(--font-body); font-size:13px; cursor:pointer;
     display:flex; align-items:center; gap:6px; transition:all .18s;
@@ -130,8 +130,8 @@
   .holdings-head { display:grid; grid-template-columns:2.5fr 1.5fr 1fr 1.5fr; gap:8px; padding:10px 18px; background:var(--surface2); border-bottom:1px solid var(--border); }
   .col-head { font-family:var(--font-mono); font-size:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.1em; }
   .col-head.r { text-align:right; }
-  .holding-row { display:grid; grid-template-columns:2.5fr 1.5fr 1fr 1.5fr; gap:8px; padding:14px 18px; border-top:1px solid var(--border); align-items:center; transition:background .15s; }
-  .holding-row:first-child { border-top:none; }
+  .category-divider { background: rgba(255,255,255,0.02); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); font-family: var(--font-mono); font-size: 11px; font-weight: 700; padding: 8px 18px; text-transform: uppercase; letter-spacing: 0.1em; }
+  .holding-row { display:grid; grid-template-columns:2.5fr 1.5fr 1fr 1.5fr; gap:8px; padding:14px 18px; align-items:center; transition:background .15s; }
   .holding-row:hover { background:var(--surface2); }
   .ticker-sym { font-family:var(--font-display); font-size:15px; font-weight:700; }
   .ticker-name { font-size:11px; color:var(--text-muted); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -150,12 +150,10 @@
   .donut-center { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; pointer-events:none; text-align:center; padding:24px; }
   .donut-center-lbl { font-family:var(--font-mono); font-size:9px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.12em; margin-bottom:3px; }
   .donut-center-val { font-family:var(--font-display); font-size:12px; font-weight:800; color:var(--text); word-break:break-all; line-height:1.3; }
-  .legend { display:flex; flex-direction:column; gap:14px; flex:1; min-width:200px; max-height: 280px; overflow-y: auto; padding-right: 8px; }
-  .legend::-webkit-scrollbar { width: 4px; }
-  .legend::-webkit-scrollbar-thumb { background: var(--border-hover); border-radius: 4px; }
+  .legend { display:flex; flex-direction:column; gap:14px; flex:1; min-width:200px; }
   .legend-item { font-size: 13px; }
   .legend-top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px; }
-  .legend-sym { font-family:var(--font-display); font-size:12px; font-weight:700; }
+  .legend-sym { font-family:var(--font-display); font-size:13px; font-weight:700; }
   .legend-pct { font-family:var(--font-mono); font-size:11px; color:var(--text-muted); }
   .legend-bar-bg { height:3px; background:var(--surface2); border-radius:2px; overflow:hidden; }
   .legend-bar-fill { height:100%; border-radius:2px; transition:width .8s cubic-bezier(.4,0,.2,1); }
@@ -163,7 +161,7 @@
 
   /* Edit Mode Grid */
   .edit-table-wrap { overflow-x: auto; margin-bottom: 20px; }
-  .edit-table { min-width: 680px; display: flex; flex-direction: column; gap: 6px; }
+  .edit-table { min-width: 720px; display: flex; flex-direction: column; gap: 6px; }
   .edit-row { display: grid; grid-template-columns: 1.2fr 1.8fr 1fr 1.2fr 1.2fr 40px; gap: 8px; align-items: center; }
   .edit-row.header { font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 4px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
   .edit-row input { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: 8px 10px; font-family: var(--font-mono); font-size: 12px; width: 100%; outline: none; transition: border-color .2s; }
@@ -192,9 +190,6 @@
 
   .spinner { display:inline-block; width:13px; height:13px; border:2px solid rgba(0,0,0,.2); border-top-color:#000; border-radius:50%; animation:spin .7s linear infinite; vertical-align:-2px; }
   .footer { margin-top:36px; text-align:center; font-family:var(--font-mono); font-size:11px; color:var(--text-dim); animation:fadeUp .5s .3s ease both; }
-
-  @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
-  @keyframes spin { to{transform:rotate(360deg)} }
 
   @media(max-width:580px) {
     .holdings-head,.holding-row { grid-template-columns:2fr 1fr 0.8fr 1.2fr; }
@@ -227,7 +222,7 @@
     <div class="card">
       <div class="card-title">Google Geminiによる全資産の自動取得</div>
       <button class="btn-primary" id="auto-btn" onclick="fetchAuto()">↺ 全銘柄の最新情報を取得</button>
-      <p class="btn-note">API節約のため「1回の通信」ですべての銘柄と為替をまとめて検索します</p>
+      <p class="btn-note">API節約のため「1回の通信」ですべての銘柄と為替をまとめて検索・解析します</p>
       <div class="error-box" id="auto-error"></div>
     </div>
 
@@ -240,7 +235,7 @@
       <div class="metric">
         <div class="metric-label">総取得金額</div>
         <div class="metric-value" id="m-cost">—</div>
-        <div class="metric-sub">各銘柄の取得金額の合計</div>
+        <div class="metric-sub">投資額（元本）の合計</div>
       </div>
       <div class="metric">
         <div class="metric-label">損益（円）</div>
@@ -297,7 +292,7 @@
     <div class="card">
       <div class="card-title">保有銘柄の編集・手動入力</div>
       <p style="font-size:11px; color:var(--text-muted); margin-bottom:16px;">
-        銘柄の追加・削除、取得金額や保有数の変更ができます。「現在値」は自動取得すると最新情報で上書きされます。
+        ※米国株・日本株・投資信託は「取得単価」を入力してください。暗号資産(BTC)は「総取得金額」を入力してください。
       </p>
       <div id="edit-container"></div>
       <button class="btn-primary" onclick="saveManual()" style="margin-top:24px; width:100%; justify-content:center;">✓ 変更を保存して計算</button>
@@ -308,30 +303,6 @@
 </div>
 
 <script>
-// デフォルトの銘柄データ（初回のみ使用）
-const DEFAULT_DATA = {
-  US: [
-    { symbol: 'AGIX', name: 'SingularityNET', qty: 26, cost: 0, price: 0 },
-    { symbol: 'BRK.B', name: 'Berkshire Hathaway', qty: 4, cost: 0, price: 0 },
-    { symbol: 'GLD', name: 'SPDR Gold Shares', qty: 1, cost: 0, price: 0 },
-    { symbol: 'NVDA', name: 'NVIDIA', qty: 10, cost: 0, price: 0 },
-    { symbol: 'QQQ', name: 'Invesco QQQ', qty: 4, cost: 0, price: 0 }
-  ],
-  JP: [
-    { symbol: '2764', name: 'ひらまつ', qty: 500, cost: 0, price: 0 },
-    { symbol: '3099', name: '三越伊勢丹', qty: 100, cost: 0, price: 0 },
-    { symbol: '7383', name: 'ネットプロHD', qty: 400, cost: 0, price: 0 },
-    { symbol: '2914', name: 'JT', qty: 100, cost: 0, price: 0 }
-  ],
-  CRYPTO: [
-    { symbol: 'BTC', name: 'Bitcoin', qty: 0.05, cost: 0, price: 0 }
-  ],
-  MF: [
-    { symbol: 'eMAXIS Slim', name: '米国株式(S&P500)', qty: 10000, cost: 0, price: 0 }
-  ],
-  FX: 150.00
-};
-
 let portfolioData;
 let chart = null;
 
@@ -342,17 +313,90 @@ const API_KEY_KEY = 'gemini_api_key';
 
 let hist = JSON.parse(localStorage.getItem(HIST_KEY) || '[]');
 
+// 資産カテゴリの定義（表示順とグラフ用カラー）
+const ASSET_CATS = [
+  { id: 'US', label: '米国株', color: '#00e5a0' },
+  { id: 'JP', label: '日本株', color: '#a78bfa' },
+  { id: 'CRYPTO', label: '暗号資産', color: '#60a5fa' },
+  { id: 'MF', label: '投資信託', color: '#f5a623' }
+];
+
+// 初期データのロードと旧キャッシュのマイグレーション（キャッシュ維持のための処理）
 function initData() {
-  const saved = localStorage.getItem(DATA_KEY);
+  const saved = localStorage.getItem(DATA_KEY) || localStorage.getItem('kazu-input');
   if (saved) {
-    try { portfolioData = JSON.parse(saved); } catch(e){}
+    try { 
+      const parsed = JSON.parse(saved);
+      // 旧キー（小文字・大文字の揺れ）に対応してマッピング
+      const legacyUS = parsed.US || parsed.us || [];
+      const legacyJP = parsed.JP || parsed.jp || [];
+      const legacyCRYPTO = parsed.CRYPTO || parsed.btc || [];
+      const legacyMF = parsed.MF || parsed.mf || [];
+      const legacyFX = parsed.FX || parsed.fx || 158.56;
+
+      portfolioData = { US: [], JP: [], CRYPTO: [], MF: [], FX: legacyFX };
+
+      // 総取得合計(cost)から取得単価(buyPrice)への変換救済ロジック
+      portfolioData.US = legacyUS.map(item => ({
+        symbol: item.symbol || item.ticker || '',
+        name: item.name || '米国株',
+        qty: parseFloat(item.qty) || 0,
+        buyPrice: parseFloat(item.buyPrice !== undefined ? item.buyPrice : ((item.cost && item.qty) ? item.cost / item.qty : 0)) || 0,
+        price: parseFloat(item.price) || 0
+      }));
+
+      portfolioData.JP = legacyJP.map(item => ({
+        symbol: item.symbol || item.code || '',
+        name: item.name || '日本株',
+        qty: parseFloat(item.qty) || 0,
+        buyPrice: parseFloat(item.buyPrice !== undefined ? item.buyPrice : ((item.cost && item.qty) ? item.cost / item.qty : 0)) || 0,
+        price: parseFloat(item.price) || 0
+      }));
+
+      portfolioData.CRYPTO = legacyCRYPTO.map(item => ({
+        symbol: item.symbol || 'BTC',
+        name: item.name || 'Bitcoin',
+        qty: parseFloat(item.qty) || 0,
+        totalCost: parseFloat(item.totalCost !== undefined ? item.totalCost : (item.cost || 0)) || 0,
+        price: parseFloat(item.price) || 0
+      }));
+
+      portfolioData.MF = legacyMF.map(item => ({
+        symbol: item.symbol || '信託',
+        name: item.name || '投資信託',
+        qty: parseFloat(item.qty) || 0,
+        buyPrice: parseFloat(item.buyPrice !== undefined ? item.buyPrice : ((item.cost && item.qty) ? item.cost / item.qty : 0)) || 0,
+        price: parseFloat(item.price) || 0
+      }));
+
+    } catch(e){ console.error("Cache migration failed", e); }
   }
-  if (!portfolioData) {
-    portfolioData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+
+  // キャッシュがない場合のデフォルトデータ初期配置
+  if (!portfolioData || (!portfolioData.US.length && !portfolioData.JP.length)) {
+    portfolioData = {
+      US: [
+        { symbol: 'AGIX', name: 'KraneShares Artificial Intelligence & Tech ETF', qty: 26, buyPrice: 0, price: 0 },
+        { symbol: 'BRK.B', name: 'Berkshire Hathaway', qty: 4, buyPrice: 0, price: 0 },
+        { symbol: 'GLD', name: 'SPDR Gold Shares', qty: 1, buyPrice: 0, price: 0 },
+        { symbol: 'NVDA', name: 'NVIDIA', qty: 10, buyPrice: 0, price: 0 },
+        { symbol: 'QQQ', name: 'Invesco QQQ', qty: 4, buyPrice: 0, price: 0 }
+      ],
+      JP: [
+        { symbol: '2764', name: 'ひらまつ', qty: 500, buyPrice: 0, price: 0 },
+        { symbol: '3099', name: '三越伊勢丹', qty: 100, buyPrice: 0, price: 0 },
+        { symbol: '7383', name: 'ネットプロHD', qty: 400, buyPrice: 0, price: 0 },
+        { symbol: '2914', name: 'JT', qty: 100, buyPrice: 0, price: 0 }
+      ],
+      CRYPTO: [
+        { symbol: 'BTC', name: 'Bitcoin', qty: 0.05, totalCost: 0, price: 0 }
+      ],
+      MF: [
+        { symbol: 'eMAXIS Slim', name: '米国株式(S&P500)', qty: 10000, buyPrice: 0, price: 0 }
+      ],
+      FX: 158.56
+    };
   }
-  // 後から追加されたカテゴリのためのセーフティ
-  ['US','JP','CRYPTO','MF'].forEach(c => { if(!portfolioData[c]) portfolioData[c] = []; });
-  if(!portfolioData.FX) portfolioData.FX = 150.00;
 }
 
 function setMode(m) {
@@ -378,30 +422,32 @@ function resetApiKey() {
   }
 }
 
-// ----------------------------------------------------
-// Gemini API による自動取得プロンプトの構築（省API・確実な取得）
-// ----------------------------------------------------
+// 省APIプロンプトの構築（AGIXを名指しで検索させて確実に拾い上げる指示）
 function buildPrompt() {
   let instructions = [];
-  
-  // JSONのキーをAIに勘違いさせないよう、機械的なID (US_0, JP_1...) で指定させる
-  portfolioData.US.forEach((item, i) => instructions.push(`"US_${i}": "${item.symbol}"の現在価格(USD)`));
-  portfolioData.JP.forEach((item, i) => instructions.push(`"JP_${i}": 日本株"${item.symbol} ${item.name}"の現在価格(JPY)`));
-  portfolioData.CRYPTO.forEach((item, i) => instructions.push(`"CR_${i}": 暗号資産"${item.symbol}"の現在価格(JPY)`));
-  portfolioData.MF.forEach((item, i) => instructions.push(`"MF_${i}": 投資信託"${item.name}"の最新基準価額(1万口あたりJPY)`));
+  portfolioData.US.forEach((item, i) => {
+    if(item.symbol === 'AGIX') {
+      instructions.push(`"US_${i}": 米国ETF「AGIX」(KraneShares Artificial Intelligence & Technology ETF)の最新1株あたり価格(USD)`);
+    } else {
+      instructions.push(`"US_${i}": 米国株「${item.symbol}」の最新1株あたり価格(USD)`);
+    }
+  });
+  portfolioData.JP.forEach((item, i) => instructions.push(`"JP_${i}": 日本株コード「${item.symbol}」の最新株価(JPY)`));
+  portfolioData.CRYPTO.forEach((item, i) => instructions.push(`"CR_${i}": 暗号資産「${item.symbol}」の最新価格(JPY)`));
+  portfolioData.MF.forEach((item, i) => instructions.push(`"MF_${i}": 投資信託「${item.name}」の最新基準価額（1万口あたりの日本円価格）`));
 
-  return `あなたはデータ抽出システムです。Google検索ツールを使用して、以下の資産の最新価格を取得し、JSON形式で返してください。
+  return `あなたは優秀な金融データ抽出システムです。Google検索ツールを使用して、指定された資産の最新価格情報を検索し、以下の指示に従った純粋なJSONオブジェクトのみを出力してください。
+Markdown記法（\`\`\`json などの囲み）や、前後の挨拶、解説、言い訳の文章は一切含めてはいけません。
 
-必ず以下の構造のJSONオブジェクトのみを出力してください。Markdown記法や挨拶は一切含めず、該当がない場合は0にしてください。
 {
   "US": { ${portfolioData.US.map((_, i) => `"US_${i}": 数値`).join(', ')} },
   "JP": { ${portfolioData.JP.map((_, i) => `"JP_${i}": 数値`).join(', ')} },
   "CRYPTO": { ${portfolioData.CRYPTO.map((_, i) => `"CR_${i}": 数値`).join(', ')} },
   "MF": { ${portfolioData.MF.map((_, i) => `"MF_${i}": 数値`).join(', ')} },
-  "USDJPY": ドル円の最新為替レート数値
+  "USDJPY": 最新の米ドル建て日本円為替レート数値
 }
 
-【検索対象と出力キーの対応】
+【各キーに対応する検索項目】
 ${instructions.join('\n')}`;
 }
 
@@ -418,7 +464,7 @@ async function fetchAuto() {
     localStorage.setItem(API_KEY_KEY, apiKey.trim());
   }
 
-  btn.innerHTML = '<span class="spinner"></span> Geminiが全資産を検索中...';
+  btn.innerHTML = '<span class="spinner"></span> Geminiが全資産の最新値を同時検索中...';
 
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey.trim()}`;
   const payload = {
@@ -446,32 +492,32 @@ async function fetchAuto() {
     }
 
     if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-      throw new Error('Geminiから有効なデータが返されませんでした。時間を置いて再度お試しください。');
+      throw new Error('Geminiから有効な応答がありませんでした。');
     }
 
     let text = data.candidates[0].content.parts[0].text;
     const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error(`AIの応答から数値データを抽出できませんでした。\n【AIの返答】\n${text}`);
+    if (!jsonMatch) throw new Error(`AIの応答からデータをパースできませんでした。\n【AIの応答内容】\n${text}`);
     
     const got = JSON.parse(jsonMatch[0]);
 
-    // IDベースでパースして安全に価格を適用
-    const catPrefixes = { US: 'US', JP: 'JP', CRYPTO: 'CR', MF: 'MF' };
-    ['US', 'JP', 'CRYPTO', 'MF'].forEach(cat => {
-      const prefix = catPrefixes[cat];
-      if (got[cat]) {
-        portfolioData[cat].forEach((item, i) => {
-          const key = `${prefix}_${i}`;
-          if (got[cat][key] !== undefined && !isNaN(got[cat][key])) {
-            item.price = parseFloat(got[cat][key]);
-          }
-        });
-      }
-    });
-    if (got.USDJPY) portfolioData.FX = parseFloat(got.USDJPY);
+    // マッピングIDを基にデータを安全に戻す
+    if (got.US) {
+      portfolioData.US.forEach((item, i) => { if (got.US[`US_${i}`] !== undefined) item.price = parseFloat(got.US[`US_${i}`]) || 0; });
+    }
+    if (got.JP) {
+      portfolioData.JP.forEach((item, i) => { if (got.JP[`JP_${i}`] !== undefined) item.price = parseFloat(got.JP[`JP_${i}`]) || 0; });
+    }
+    if (got.CRYPTO) {
+      portfolioData.CRYPTO.forEach((item, i) => { if (got.CRYPTO[`CR_${i}`] !== undefined) item.price = parseFloat(got.CRYPTO[`CR_${i}`]) || 0; });
+    }
+    if (got.MF) {
+      portfolioData.MF.forEach((item, i) => { if (got.MF[`MF_${i}`] !== undefined) item.price = parseFloat(got.MF[`MF_${i}`]) || 0; });
+    }
+    if (got.USDJPY) portfolioData.FX = parseFloat(got.USDJPY) || portfolioData.FX;
 
     localStorage.setItem(DATA_KEY, JSON.stringify(portfolioData));
-    renderPortfolio('Gemini自動取得 (最新)');
+    renderPortfolio('Gemini自動取得');
 
   } catch(e) {
     errBox.style.display = 'block';
@@ -483,48 +529,50 @@ async function fetchAuto() {
 }
 
 // ----------------------------------------------------
-// 編集・手動入力（Edit Rows）の描画
+// 編集モードUIの構築（米国株・日本株・投信＝単価、BTC＝総額）
 // ----------------------------------------------------
 function renderEditRows() {
   const container = document.getElementById('edit-container');
   let html = '';
-  const cats = [
-    {id: 'US', title: '米国株 (USD)'},
-    {id: 'JP', title: '日本株 (JPY)'},
-    {id: 'CRYPTO', title: '暗号資産 (JPY)'},
-    {id: 'MF', title: '投資信託 (JPY) ※現在値は1万口あたり'}
+  const categories = [
+    { id: 'US', title: '米国株 (USD建て単価を入力)' },
+    { id: 'JP', title: '日本株 (円建て単価を入力)' },
+    { id: 'CRYPTO', title: '暗号資産 (※BTCは総取得金額を直接入力)' },
+    { id: 'MF', title: '投資信託 (円建て単価を入力 ※現在値は1万口あたり換算)' }
   ];
 
-  cats.forEach(c => {
+  categories.forEach(c => {
     html += `<div class="cat-title"><span>${c.title}</span> <button class="add-btn" onclick="addRow('${c.id}')">＋ 追加</button></div>`;
     html += `<div class="edit-table-wrap"><div class="edit-table">`;
     html += `<div class="edit-row header">
-      <div>シンボル/コード</div><div>名称</div><div>保有数</div><div>取得金額(円)</div><div>現在値</div><div></div>
+      <div>シンボル/コード</div><div>名称</div><div>保有数</div><div>${c.id==='CRYPTO'?'総取得金額(円)':'取得単価'}</div><div>現在値</div><div></div>
     </div>`;
     
     if (portfolioData[c.id].length === 0) {
-      html += `<div style="color:var(--text-dim); font-size:12px; padding: 10px 0;">銘柄がありません</div>`;
+      html += `<div style="color:var(--text-dim); font-size:12px; padding: 10px 0;">銘柄が登録されていません</div>`;
     }
 
     portfolioData[c.id].forEach((item, index) => {
-      const sSym = item.symbol.replace(/"/g, '&quot;');
-      const sName = item.name.replace(/"/g, '&quot;');
+      const sSym = (item.symbol || '').replace(/"/g, '&quot;');
+      const sName = (item.name || '').replace(/"/g, '&quot;');
+      const costValue = c.id === 'CRYPTO' ? (item.totalCost || 0) : (item.buyPrice || 0);
+
       html += `<div class="edit-row">
         <input type="text" placeholder="シンボル" value="${sSym}" onchange="updateData('${c.id}', ${index}, 'symbol', this.value)">
         <input type="text" placeholder="名称" value="${sName}" onchange="updateData('${c.id}', ${index}, 'name', this.value)">
-        <input type="number" step="any" placeholder="保有数" value="${item.qty}" onchange="updateData('${c.id}', ${index}, 'qty', this.value)">
-        <input type="number" step="any" placeholder="取得合計" value="${item.cost}" onchange="updateData('${c.id}', ${index}, 'cost', this.value)">
-        <input type="number" step="any" placeholder="現在値" value="${item.price}" onchange="updateData('${c.id}', ${index}, 'price', this.value)">
+        <input type="number" step="any" placeholder="保有数" value="${item.qty || 0}" onchange="updateData('${c.id}', ${index}, 'qty', this.value)">
+        <input type="number" step="any" placeholder="金額" value="${costValue}" onchange="updateData('${c.id}', ${index}, '${c.id==='CRYPTO'?'totalCost':'buyPrice'}', this.value)">
+        <input type="number" step="any" placeholder="現在値" value="${item.price || 0}" onchange="updateData('${c.id}', ${index}, 'price', this.value)">
         <button class="del-btn" onclick="deleteRow('${c.id}', ${index})">✕</button>
       </div>`;
     });
     html += `</div></div>`;
   });
   
-  html += `<div class="cat-title">為替 (USD/JPY)</div>
+  html += `<div class="cat-title">基準為替レート (USD/JPY)</div>
     <div class="edit-table-wrap"><div class="edit-table" style="min-width: unset;">
       <div class="edit-row" style="grid-template-columns: 200px; max-width:200px">
-        <input type="number" step="any" placeholder="ドル円レート" value="${portfolioData.FX}" onchange="portfolioData.FX = parseFloat(this.value)">
+        <input type="number" step="any" placeholder="ドル円" value="${portfolioData.FX}" onchange="portfolioData.FX = parseFloat(this.value) || 150">
       </div>
     </div></div>`;
 
@@ -533,7 +581,7 @@ function renderEditRows() {
 
 function updateData(cat, index, field, value) {
   let val = value;
-  if (field === 'qty' || field === 'cost' || field === 'price') val = parseFloat(value) || 0;
+  if (field === 'qty' || field === 'buyPrice' || field === 'totalCost' || field === 'price') val = parseFloat(value) || 0;
   portfolioData[cat][index][field] = val;
 }
 
@@ -545,18 +593,22 @@ function deleteRow(cat, index) {
 }
 
 function addRow(cat) {
-  portfolioData[cat].push({ symbol: '', name: '', qty: 0, cost: 0, price: 0 });
+  if(cat === 'CRYPTO') {
+    portfolioData[cat].push({ symbol: '', name: '', qty: 0, totalCost: 0, price: 0 });
+  } else {
+    portfolioData[cat].push({ symbol: '', name: '', qty: 0, buyPrice: 0, price: 0 });
+  }
   renderEditRows();
 }
 
 function saveManual() {
   localStorage.setItem(DATA_KEY, JSON.stringify(portfolioData));
-  renderPortfolio('手動保存');
+  renderPortfolio('手動更新');
   setMode('auto');
 }
 
 // ----------------------------------------------------
-// UI 描画（Portfolio Rendering）
+// メインポートフォリオの描画（指定順ソート＆カテゴリシェア円グラフ）
 // ----------------------------------------------------
 function fmt(n) { return Math.round(n).toLocaleString('ja-JP'); }
 function fmtF(n) { return n.toLocaleString('ja-JP', {minimumFractionDigits: 2, maximumFractionDigits: 2}); }
@@ -564,41 +616,64 @@ function fmtF(n) { return n.toLocaleString('ja-JP', {minimumFractionDigits: 2, m
 function renderPortfolio(srcLabel) {
   let totalJPY = 0;
   let totalCost = 0;
-  let chartData = [];
+  let rowsHtml = '';
   
-  const colors = ['#00e5a0', '#a78bfa', '#60a5fa', '#f5a623', '#ff4d6d', '#00b8d9', '#ff8b00', '#36b37e', '#6554c0', '#ff5630', '#0065ff', '#36c5f0', '#2eb67d', '#e01e5a'];
-  let colorIdx = 0;
+  // カテゴリごとの集計器
+  let catTotals = { US: 0, JP: 0, CRYPTO: 0, MF: 0 };
+  let catCosts = { US: 0, JP: 0, CRYPTO: 0, MF: 0 };
 
-  ['US', 'JP', 'CRYPTO', 'MF'].forEach(cat => {
-    portfolioData[cat].forEach(item => {
-      let valJPY = 0;
-      let priceDisplay = '';
+  // ユーザー指定の順序（米国株 -> 日本株 -> 暗号資産 -> 投資信託）に沿って回す
+  ASSET_CATS.forEach(cat => {
+    const list = portfolioData[cat.id] || [];
+    if (list.length > 0) {
+      rowsHtml += `<div class="category-divider" style="color:${cat.color};">${cat.label}</div>`;
+      
+      list.forEach(item => {
+        let valJPY = 0;
+        let costJPY = 0;
+        let priceDisplay = '';
 
-      if (cat === 'US') {
-        valJPY = item.price * item.qty * portfolioData.FX;
-        priceDisplay = `$${fmtF(item.price)}`;
-      } else if (cat === 'MF') {
-        valJPY = (item.price / 10000) * item.qty;
-        priceDisplay = `¥${fmt(item.price)}`;
-      } else {
-        valJPY = item.price * item.qty;
-        priceDisplay = `¥${fmt(item.price)}`;
-      }
+        if (cat.id === 'US') {
+          valJPY = item.price * item.qty * portfolioData.FX;
+          costJPY = item.buyPrice * item.qty * portfolioData.FX; // 取得単価×所有数×為替
+          priceDisplay = `$${fmtF(item.price)}`;
+        } else if (cat.id === 'JP') {
+          valJPY = item.price * item.qty;
+          costJPY = item.buyPrice * item.qty; // 取得単価×所有数
+          priceDisplay = `¥${fmt(item.price)}`;
+        } else if (cat.id === 'CRYPTO') {
+          valJPY = item.price * item.qty;
+          costJPY = item.totalCost || 0; // BTCは総取得金額
+          priceDisplay = `¥${fmt(item.price)}`;
+        } else if (cat.id === 'MF') {
+          valJPY = (item.price / 10000) * item.qty;
+          costJPY = (item.buyPrice / 10000) * item.qty; // 取得単価×所有数(万口換算)
+          priceDisplay = `¥${fmt(item.price)}`;
+        }
 
-      totalJPY += valJPY;
-      totalCost += (item.cost || 0);
+        totalJPY += valJPY;
+        totalCost += costJPY;
+        catTotals[cat.id] += valJPY;
+        catCosts[cat.id] += costJPY;
 
-      chartData.push({
-        symbol: item.symbol, name: item.name, qty: item.qty, valJPY: valJPY,
-        priceDisplay: priceDisplay, color: colors[colorIdx % colors.length]
+        rowsHtml += `
+          <div class="holding-row">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="width:6px;height:6px;border-radius:50%;background:${cat.color};"></span>
+              <div style="min-width:0">
+                <div class="ticker-sym">${item.symbol || '---'}</div>
+                <div class="ticker-name">${item.name || '---'}</div>
+              </div>
+            </div>
+            <div class="h-price">${priceDisplay}</div>
+            <div class="h-qty">${item.qty}</div>
+            <div class="h-val"><div class="h-jpy">¥${fmt(valJPY)}</div></div>
+          </div>`;
       });
-      colorIdx++;
-    });
+    }
   });
 
-  // 評価額順に並び替え
-  chartData.sort((a, b) => b.valJPY - a.valJPY);
-
+  // 各種インジケータ数値の算出と描画
   const pnl = totalJPY - totalCost;
   const pct = totalCost > 0 ? (pnl/totalCost)*100 : 0;
   const pos = pnl >= 0;
@@ -617,25 +692,23 @@ function renderPortfolio(srcLabel) {
   pctEl.textContent = (pos?'+':'') + pct.toFixed(2) + '%';
   pctEl.className   = 'metric-sub ' + (pos?'pos':'neg');
 
-  document.getElementById('holdings-rows').innerHTML = chartData.map((item) => `
-    <div class="holding-row">
-      <div style="display:flex;align-items:center;gap:10px">
-        <span style="width:8px;height:8px;border-radius:50%;background:${item.color};box-shadow:0 0 6px ${item.color}66;flex-shrink:0"></span>
-        <div style="min-width:0"><div class="ticker-sym">${item.symbol}</div><div class="ticker-name">${item.name}</div></div>
-      </div>
-      <div class="h-price">${item.priceDisplay}</div>
-      <div class="h-qty">${item.qty}</div>
-      <div class="h-val"><div class="h-jpy">¥${fmt(item.valJPY)}</div></div>
-    </div>`).join('');
-
+  document.getElementById('holdings-rows').innerHTML = rowsHtml;
   document.getElementById('donut-val').textContent = '¥' + fmt(totalJPY);
+
+  // カテゴリごとの割合に変換して円グラフとレジェンドを生成
+  const chartData = ASSET_CATS.map(cat => ({
+    label: cat.label,
+    valJPY: catTotals[cat.id],
+    color: cat.color
+  }));
+
   renderDonut(chartData);
 
   document.getElementById('legend').innerHTML = chartData.map(r => {
     const p = totalJPY > 0 ? ((r.valJPY/totalJPY)*100).toFixed(1) : 0;
     return `<div class="legend-item">
       <div class="legend-top">
-        <span class="legend-sym" style="color:${r.color}">${r.symbol}</span>
+        <span class="legend-sym" style="color:${r.color}">${r.label}</span>
         <span class="legend-pct">${p}%</span>
       </div>
       <div class="legend-bar-bg"><div class="legend-bar-fill" style="width:${p}%;background:${r.color}"></div></div>
@@ -651,8 +724,8 @@ function renderDonut(chartData) {
   chart = new Chart(document.getElementById('donutChart'), {
     type:'doughnut',
     data:{
-      labels: chartData.map(r=>r.symbol),
-      datasets:[{data:chartData.map(r=>r.valJPY), backgroundColor:chartData.map(r=>r.color), borderWidth:0, hoverOffset:5}]
+      labels: chartData.map(r => r.label),
+      datasets:[{data:chartData.map(r => r.valJPY), backgroundColor:chartData.map(r => r.color), borderWidth:0, hoverOffset:5}]
     },
     options:{responsive:true, maintainAspectRatio:true, cutout:'72%',
       plugins:{legend:{display:false},tooltip:{enabled:false}},
@@ -697,12 +770,11 @@ function clearHistory() {
   }
 }
 
-// アプリの起動処理
+// 初期起動シークエンス
 initData();
 initHistory();
-renderPortfolio('ローカル読込');
+renderPortfolio('キャッシュ復元');
 document.getElementById('stamp').textContent = '— 自動取得 または 編集モード を選択 —';
-
 </script>
 </body>
 </html>
