@@ -23,6 +23,7 @@
     --green-border: rgba(0,229,160,0.3);
     --red: #ff4d6d;
     --red-dim: rgba(255,77,109,0.12);
+    --blue: #60a5fa; /* プラスの損益用青色 */
     --font-display: 'Syne', sans-serif;
     --font-body: 'Noto Sans JP', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
@@ -114,11 +115,12 @@
 
   /* Metrics */
   .metrics { display:grid; grid-template-columns:repeat(auto-fit,minmax(145px,1fr)); gap:12px; margin-bottom:20px; animation:fadeUp .5s .16s ease both; }
-  .metric { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px 18px; transition:border-color .18s; }
+  .metric { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px 16px; transition:border-color .18s; display:flex; flex-direction:column; justify-content:center; }
   .metric:hover { border-color:var(--border-hover); }
   .metric.hl { border-color:var(--green-border); background:linear-gradient(135deg,var(--surface),rgba(0,229,160,.04)); }
-  .metric-label { font-family:var(--font-mono); font-size:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.12em; margin-bottom:7px; }
-  .metric-value { font-family:var(--font-display); font-size:22px; font-weight:800; color:var(--text); line-height:1; letter-spacing:-.02em; margin-bottom:4px; word-break:break-all; }
+  .metric-label { font-family:var(--font-mono); font-size:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.12em; margin-bottom:4px; }
+  /* はみ出し防止のレスポンシブフォント設定 */
+  .metric-value { font-family:var(--font-display); font-size:clamp(16px, 4.5vw, 22px); font-weight:800; color:var(--text); line-height:1.2; letter-spacing:-.02em; margin-bottom:2px; word-break:break-word; }
   .metric-value.pos { color:var(--green); }
   .metric-value.neg { color:var(--red); }
   .metric-sub { font-family:var(--font-mono); font-size:11px; color:var(--text-muted); }
@@ -127,17 +129,17 @@
 
   /* Holdings View */
   .holdings-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; overflow:hidden; margin-bottom:20px; animation:fadeUp .5s .2s ease both; }
-  .holdings-head { display:grid; grid-template-columns:2.5fr 1.5fr 1fr 1.5fr; gap:8px; padding:10px 18px; background:var(--surface2); border-bottom:1px solid var(--border); }
+  .holdings-head { display:grid; grid-template-columns:2.5fr 1.5fr 1fr 1.6fr; gap:8px; padding:10px 18px; background:var(--surface2); border-bottom:1px solid var(--border); }
   .col-head { font-family:var(--font-mono); font-size:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.1em; }
   .col-head.r { text-align:right; }
   .category-divider { background: rgba(255,255,255,0.02); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); font-family: var(--font-mono); font-size: 11px; font-weight: 700; padding: 8px 18px; text-transform: uppercase; letter-spacing: 0.1em; }
-  .holding-row { display:grid; grid-template-columns:2.5fr 1.5fr 1fr 1.5fr; gap:8px; padding:14px 18px; align-items:center; transition:background .15s; }
+  .holding-row { display:grid; grid-template-columns:2.5fr 1.5fr 1fr 1.6fr; gap:8px; padding:12px 18px; align-items:center; transition:background .15s; }
   .holding-row:hover { background:var(--surface2); }
   .ticker-sym { font-family:var(--font-display); font-size:15px; font-weight:700; }
   .ticker-name { font-size:11px; color:var(--text-muted); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .h-price,.h-qty { font-family:var(--font-mono); font-size:13px; }
   .h-qty { color:var(--text-muted); }
-  .h-val { text-align:right; }
+  .h-val { text-align:right; display:flex; flex-direction:column; justify-content:center; }
   .h-jpy { font-family:var(--font-mono); font-size:13px; font-weight:500; }
 
   /* Chart */
@@ -191,8 +193,10 @@
   .spinner { display:inline-block; width:13px; height:13px; border:2px solid rgba(0,0,0,.2); border-top-color:#000; border-radius:50%; animation:spin .7s linear infinite; vertical-align:-2px; }
   .footer { margin-top:36px; text-align:center; font-family:var(--font-mono); font-size:11px; color:var(--text-dim); animation:fadeUp .5s .3s ease both; }
 
+  /* スマホ等ではみ出しを防ぐための2カラムグリッド指定 */
   @media(max-width:580px) {
-    .holdings-head,.holding-row { grid-template-columns:2fr 1fr 0.8fr 1.2fr; }
+    .metrics { grid-template-columns: 1fr 1fr; }
+    .holdings-head,.holding-row { grid-template-columns:2fr 1.2fr 0.8fr 1.5fr; }
     .chart-section { flex-direction:column; }
     .donut-wrap { margin:0 auto; }
   }
@@ -254,7 +258,7 @@
         <span class="col-head">銘柄</span>
         <span class="col-head">現在値</span>
         <span class="col-head">保有数</span>
-        <span class="col-head r">評価額（円）</span>
+        <span class="col-head r">評価額・損益</span>
       </div>
       <div id="holdings-rows"></div>
     </div>
@@ -321,13 +325,12 @@ const ASSET_CATS = [
   { id: 'MF', label: '投資信託', color: '#f5a623' }
 ];
 
-// 初期データのロードと旧キャッシュのマイグレーション（キャッシュ維持のための処理）
+// 初期データのロードとマイグレーション
 function initData() {
   const saved = localStorage.getItem(DATA_KEY) || localStorage.getItem('kazu-input');
   if (saved) {
     try { 
       const parsed = JSON.parse(saved);
-      // 旧キー（小文字・大文字の揺れ）に対応してマッピング
       const legacyUS = parsed.US || parsed.us || [];
       const legacyJP = parsed.JP || parsed.jp || [];
       const legacyCRYPTO = parsed.CRYPTO || parsed.btc || [];
@@ -336,7 +339,6 @@ function initData() {
 
       portfolioData = { US: [], JP: [], CRYPTO: [], MF: [], FX: legacyFX };
 
-      // 総取得合計(cost)から取得単価(buyPrice)への変換救済ロジック
       portfolioData.US = legacyUS.map(item => ({
         symbol: item.symbol || item.ticker || '',
         name: item.name || '米国株',
@@ -372,7 +374,7 @@ function initData() {
     } catch(e){ console.error("Cache migration failed", e); }
   }
 
-  // キャッシュがない場合のデフォルトデータ初期配置
+  // キャッシュがない場合のデフォルトデータ
   if (!portfolioData || (!portfolioData.US.length && !portfolioData.JP.length)) {
     portfolioData = {
       US: [
@@ -422,7 +424,6 @@ function resetApiKey() {
   }
 }
 
-// 省APIプロンプトの構築（AGIXを名指しで検索させて確実に拾い上げる指示）
 function buildPrompt() {
   let instructions = [];
   portfolioData.US.forEach((item, i) => {
@@ -501,7 +502,6 @@ async function fetchAuto() {
     
     const got = JSON.parse(jsonMatch[0]);
 
-    // マッピングIDを基にデータを安全に戻す
     if (got.US) {
       portfolioData.US.forEach((item, i) => { if (got.US[`US_${i}`] !== undefined) item.price = parseFloat(got.US[`US_${i}`]) || 0; });
     }
@@ -528,9 +528,6 @@ async function fetchAuto() {
   btn.innerHTML = '↺ 全銘柄の最新情報を取得';
 }
 
-// ----------------------------------------------------
-// 編集モードUIの構築（米国株・日本株・投信＝単価、BTC＝総額）
-// ----------------------------------------------------
 function renderEditRows() {
   const container = document.getElementById('edit-container');
   let html = '';
@@ -607,9 +604,6 @@ function saveManual() {
   setMode('auto');
 }
 
-// ----------------------------------------------------
-// メインポートフォリオの描画（指定順ソート＆カテゴリシェア円グラフ）
-// ----------------------------------------------------
 function fmt(n) { return Math.round(n).toLocaleString('ja-JP'); }
 function fmtF(n) { return n.toLocaleString('ja-JP', {minimumFractionDigits: 2, maximumFractionDigits: 2}); }
 
@@ -618,11 +612,9 @@ function renderPortfolio(srcLabel) {
   let totalCost = 0;
   let rowsHtml = '';
   
-  // カテゴリごとの集計器
   let catTotals = { US: 0, JP: 0, CRYPTO: 0, MF: 0 };
   let catCosts = { US: 0, JP: 0, CRYPTO: 0, MF: 0 };
 
-  // ユーザー指定の順序（米国株 -> 日本株 -> 暗号資産 -> 投資信託）に沿って回す
   ASSET_CATS.forEach(cat => {
     const list = portfolioData[cat.id] || [];
     if (list.length > 0) {
@@ -635,19 +627,19 @@ function renderPortfolio(srcLabel) {
 
         if (cat.id === 'US') {
           valJPY = item.price * item.qty * portfolioData.FX;
-          costJPY = item.buyPrice * item.qty * portfolioData.FX; // 取得単価×所有数×為替
+          costJPY = item.buyPrice * item.qty * portfolioData.FX;
           priceDisplay = `$${fmtF(item.price)}`;
         } else if (cat.id === 'JP') {
           valJPY = item.price * item.qty;
-          costJPY = item.buyPrice * item.qty; // 取得単価×所有数
+          costJPY = item.buyPrice * item.qty;
           priceDisplay = `¥${fmt(item.price)}`;
         } else if (cat.id === 'CRYPTO') {
           valJPY = item.price * item.qty;
-          costJPY = item.totalCost || 0; // BTCは総取得金額
+          costJPY = item.totalCost || 0;
           priceDisplay = `¥${fmt(item.price)}`;
         } else if (cat.id === 'MF') {
           valJPY = (item.price / 10000) * item.qty;
-          costJPY = (item.buyPrice / 10000) * item.qty; // 取得単価×所有数(万口換算)
+          costJPY = (item.buyPrice / 10000) * item.qty;
           priceDisplay = `¥${fmt(item.price)}`;
         }
 
@@ -655,6 +647,12 @@ function renderPortfolio(srcLabel) {
         totalCost += costJPY;
         catTotals[cat.id] += valJPY;
         catCosts[cat.id] += costJPY;
+
+        // 個別銘柄の損益計算
+        const itemPnl = valJPY - costJPY;
+        const posItem = itemPnl >= 0;
+        const itemPnlColor = posItem ? 'var(--blue)' : 'var(--red)';
+        const itemPnlStr = (posItem ? '+' : '') + fmt(itemPnl) + ' 円';
 
         rowsHtml += `
           <div class="holding-row">
@@ -667,13 +665,15 @@ function renderPortfolio(srcLabel) {
             </div>
             <div class="h-price">${priceDisplay}</div>
             <div class="h-qty">${item.qty}</div>
-            <div class="h-val"><div class="h-jpy">¥${fmt(valJPY)}</div></div>
+            <div class="h-val">
+              <div class="h-jpy">¥${fmt(valJPY)}</div>
+              <div style="color:${itemPnlColor}; font-size:11px; font-family:var(--font-mono); margin-top:2px;">${itemPnlStr}</div>
+            </div>
           </div>`;
       });
     }
   });
 
-  // 各種インジケータ数値の算出と描画
   const pnl = totalJPY - totalCost;
   const pct = totalCost > 0 ? (pnl/totalCost)*100 : 0;
   const pos = pnl >= 0;
@@ -690,91 +690,4 @@ function renderPortfolio(srcLabel) {
   pnlEl.textContent = (pos?'+':'') + fmt(pnl) + ' 円';
   pnlEl.className   = 'metric-value ' + (pos?'pos':'neg');
   pctEl.textContent = (pos?'+':'') + pct.toFixed(2) + '%';
-  pctEl.className   = 'metric-sub ' + (pos?'pos':'neg');
-
-  document.getElementById('holdings-rows').innerHTML = rowsHtml;
-  document.getElementById('donut-val').textContent = '¥' + fmt(totalJPY);
-
-  // カテゴリごとの割合に変換して円グラフとレジェンドを生成
-  const chartData = ASSET_CATS.map(cat => ({
-    label: cat.label,
-    valJPY: catTotals[cat.id],
-    color: cat.color
-  }));
-
-  renderDonut(chartData);
-
-  document.getElementById('legend').innerHTML = chartData.map(r => {
-    const p = totalJPY > 0 ? ((r.valJPY/totalJPY)*100).toFixed(1) : 0;
-    return `<div class="legend-item">
-      <div class="legend-top">
-        <span class="legend-sym" style="color:${r.color}">${r.label}</span>
-        <span class="legend-pct">${p}%</span>
-      </div>
-      <div class="legend-bar-bg"><div class="legend-bar-fill" style="width:${p}%;background:${r.color}"></div></div>
-      <div class="legend-amt">¥${fmt(r.valJPY)}</div>
-    </div>`;
-  }).join('');
-
-  addHistory(totalJPY, totalCost, portfolioData.FX);
-}
-
-function renderDonut(chartData) {
-  if (chart) { chart.destroy(); chart = null; }
-  chart = new Chart(document.getElementById('donutChart'), {
-    type:'doughnut',
-    data:{
-      labels: chartData.map(r => r.label),
-      datasets:[{data:chartData.map(r => r.valJPY), backgroundColor:chartData.map(r => r.color), borderWidth:0, hoverOffset:5}]
-    },
-    options:{responsive:true, maintainAspectRatio:true, cutout:'72%',
-      plugins:{legend:{display:false},tooltip:{enabled:false}},
-      animation:{animateRotate:true,duration:800}}
-  });
-}
-
-function addHistory(totalJPY, totalCost, fx) {
-  const now = new Date();
-  const pnl = totalJPY - totalCost;
-  const timeStr = now.toLocaleDateString('ja-JP',{month:'2-digit',day:'2-digit'}) + ' '
-                + now.toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});
-  
-  if (hist.length > 0 && hist[0].time.startsWith(timeStr.split(' ')[0]) && hist[0].totalJPY === totalJPY) return; 
-
-  hist.unshift({ time: timeStr, totalJPY, totalCost, pnl, fx });
-  if (hist.length > 20) hist.pop();
-  localStorage.setItem(HIST_KEY, JSON.stringify(hist));
-  
-  document.getElementById('history-section').style.display = 'block';
-  renderHistoryRows();
-}
-
-function renderHistoryRows() {
-  document.getElementById('history-body').innerHTML = hist.map(h => {
-    const pos = h.pnl >= 0;
-    return `<tr>
-      <td style="color:var(--text-dim);white-space:nowrap">${h.time}</td>
-      <td>¥${fmt(h.totalJPY)}</td>
-      <td>¥${fmt(h.totalCost)}</td>
-      <td class="${pos?'pnl-pos':'pnl-neg'}">${pos?'+':''}${fmt(h.pnl)} 円</td>
-      <td>${h.fx.toFixed(2)}</td>
-    </tr>`;
-  }).join('');
-}
-
-function clearHistory() {
-  if(confirm('取得履歴をすべて削除しますか？')) {
-    hist = [];
-    localStorage.removeItem(HIST_KEY);
-    document.getElementById('history-body').innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-dim);padding:16px">まだ記録がありません</td></tr>';
-  }
-}
-
-// 初期起動シークエンス
-initData();
-initHistory();
-renderPortfolio('キャッシュ復元');
-document.getElementById('stamp').textContent = '— 自動取得 または 編集モード を選択 —';
-</script>
-</body>
-</html>
+  pctEl
