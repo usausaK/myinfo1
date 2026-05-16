@@ -8,127 +8,69 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --bg: #0a0a0f;
-    --surface: #12121a;
-    --surface2: #1a1a26;
-    --border: rgba(255,255,255,0.07);
-    --border-hover: rgba(255,255,255,0.15);
-    --text: #f0f0f8;
-    --text-muted: rgba(240,240,248,0.45);
-    --text-dim: rgba(240,240,248,0.25);
-    --green: #00e5a0;
-    --green-dim: rgba(0,229,160,0.12);
-    --green-border: rgba(0,229,160,0.3);
-    --red: #ff4d6d;
-    --red-dim: rgba(255,77,109,0.12);
-    --blue: #60a5fa; /* プラスの損益用青色 */
-    --font-display: 'Syne', sans-serif;
-    --font-body: 'Noto Sans JP', sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
+    --bg: #0a0a0f; --surface: #12121a; --surface2: #1a1a26;
+    --border: rgba(255,255,255,0.07); --border-hover: rgba(255,255,255,0.15);
+    --text: #f0f0f8; --text-muted: rgba(240,240,248,0.45); --text-dim: rgba(240,240,248,0.25);
+    --green: #00e5a0; --green-dim: rgba(0,229,160,0.12); --green-border: rgba(0,229,160,0.3);
+    --red: #ff4d6d; --red-dim: rgba(255,77,109,0.12); --blue: #60a5fa;
+    --font-display: 'Syne', sans-serif; --font-body: 'Noto Sans JP', sans-serif; --font-mono: 'JetBrains Mono', monospace;
   }
-
   html { scroll-behavior: smooth; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-body);
-    font-size: 14px;
-    line-height: 1.6;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background-image:
-      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none; z-index: 0;
-  }
-
-  .app {
-    position: relative; z-index: 1;
-    max-width: 900px; margin: 0 auto;
-    padding: 36px 20px 72px;
-  }
-
-  /* Header */
+  body { background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 14px; line-height: 1.6; min-height: 100vh; overflow-x: hidden; }
+  body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
+  .app { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 36px 20px 72px; }
   .header { margin-bottom: 36px; animation: fadeUp .5s ease both; }
-  .eyebrow {
-    font-family: var(--font-mono); font-size: 11px; color: var(--green);
-    letter-spacing: .15em; text-transform: uppercase;
-    margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
-  }
+  .eyebrow { font-family: var(--font-mono); font-size: 11px; color: var(--green); letter-spacing: .15em; text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
   .eyebrow::before { content:''; display:inline-block; width:20px; height:1px; background:var(--green); }
-  h1 {
-    font-family: var(--font-display);
-    font-size: clamp(28px,5vw,42px); font-weight: 800;
-    line-height: 1.1; letter-spacing: -.02em;
-  }
+  h1 { font-family: var(--font-display); font-size: clamp(28px,5vw,42px); font-weight: 800; line-height: 1.1; letter-spacing: -.02em; }
   h1 span { color: var(--green); }
   .header-sub { margin-top:6px; font-family:var(--font-mono); font-size:12px; color:var(--text-dim); }
-
-  /* Toggle */
   .mode-wrap { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; animation:fadeUp .5s .08s ease both; flex-wrap: wrap; gap: 12px; }
   .mode-left { display:flex; align-items:center; gap:12px; }
   .mode-label { font-family:var(--font-mono); font-size:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.1em; }
   .toggle-wrap { display:flex; background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:3px; gap:2px; }
-  .toggle-btn {
-    padding:6px 18px; border:1px solid transparent; border-radius:6px;
-    background:transparent; color:var(--text-muted);
-    font-family:var(--font-body); font-size:13px; cursor:pointer;
-    display:flex; align-items:center; gap:6px; transition:all .18s;
-  }
+  .toggle-btn { padding:6px 18px; border:1px solid transparent; border-radius:6px; background:transparent; color:var(--text-muted); font-family:var(--font-body); font-size:13px; cursor:pointer; display:flex; align-items:center; gap:6px; transition:all .18s; }
   .toggle-btn.active { background:var(--surface2); color:var(--text); border-color:var(--border-hover); }
   .api-reset-btn { background:none; border:none; color:var(--text-dim); font-size:11px; font-family:var(--font-mono); text-decoration:underline; cursor:pointer; }
-
-  /* Panels */
-  .panel { display:none; }
-  .panel.visible { display:block; animation:fadeUp .25s ease both; }
-
-  /* Card */
-  .card {
-    background:var(--surface); border:1px solid var(--border); border-radius:16px;
-    padding:22px 24px; margin-bottom:20px; animation:fadeUp .5s .12s ease both;
-  }
+  .panel { display:none; } .panel.visible { display:block; animation:fadeUp .25s ease both; }
+  .card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:22px 24px; margin-bottom:20px; animation:fadeUp .5s .12s ease both; }
   .card-title { font-family:var(--font-mono); font-size:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.14em; margin-bottom:16px; }
-
-  /* Button */
-  .btn-primary {
-    display:inline-flex; align-items:center; gap:8px;
-    background:var(--green); color:#000; border:none; border-radius:8px;
-    padding:10px 22px; font-family:var(--font-display); font-size:13px; font-weight:700;
-    cursor:pointer; letter-spacing:.02em; transition:background .18s, transform .15s;
-  }
+  .btn-primary { display:inline-flex; align-items:center; gap:8px; background:var(--green); color:#000; border:none; border-radius:8px; padding:10px 22px; font-family:var(--font-display); font-size:13px; font-weight:700; cursor:pointer; letter-spacing:.02em; transition:background .18s, transform .15s; }
   .btn-primary:hover { background:#00ffb3; transform:translateY(-1px); }
   .btn-primary:active { transform:translateY(0); }
   .btn-primary:disabled { opacity:.45; cursor:not-allowed; transform:none; }
   .btn-note { font-family:var(--font-mono); font-size:11px; color:var(--text-dim); margin-top:9px; }
-  .error-box {
-    display:none; background:var(--red-dim); border:1px solid rgba(255,77,109,.25);
-    border-radius:8px; padding:12px 16px; font-family:var(--font-mono);
-    font-size:12px; color:var(--red); margin-top:12px; white-space:pre-wrap; word-break: break-all; line-height: 1.5;
-  }
-
-  /* Metrics */
-  .metrics { display:grid; grid-template-columns:repeat(auto-fit,minmax(145px,1fr)); gap:12px; margin-bottom:20px; animation:fadeUp .5s .16s ease both; }
+  .error-box { display:none; background:var(--red-dim); border:1px solid rgba(255,77,109,.25); border-radius:8px; padding:12px 16px; font-family:var(--font-mono); font-size:12px; color:var(--red); margin-top:12px; white-space:pre-wrap; word-break: break-all; line-height: 1.5; }
+  
+  /* Metrics 2行レイアウト */
+  .metrics { display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:20px; animation:fadeUp .5s .16s ease both; }
+  @media(min-width: 680px) { .metrics { grid-template-columns: repeat(4, 1fr); } }
   .metric { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px 16px; transition:border-color .18s; display:flex; flex-direction:column; justify-content:center; }
   .metric:hover { border-color:var(--border-hover); }
   .metric.hl { border-color:var(--green-border); background:linear-gradient(135deg,var(--surface),rgba(0,229,160,.04)); }
   .metric-label { font-family:var(--font-mono); font-size:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.12em; margin-bottom:4px; }
-  /* はみ出し防止のレスポンシブフォント設定 */
   .metric-value { font-family:var(--font-display); font-size:clamp(16px, 4.5vw, 22px); font-weight:800; color:var(--text); line-height:1.2; letter-spacing:-.02em; margin-bottom:2px; word-break:break-word; }
-  .metric-value.pos { color:var(--green); }
-  .metric-value.neg { color:var(--red); }
+  .metric-value.pos { color:var(--green); } .metric-value.neg { color:var(--red); }
   .metric-sub { font-family:var(--font-mono); font-size:11px; color:var(--text-muted); }
-  .metric-sub.pos { color:var(--green); }
-  .metric-sub.neg { color:var(--red); }
+  .metric-sub.pos { color:var(--green); } .metric-sub.neg { color:var(--red); }
 
-  /* Holdings View */
-  .holdings-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; overflow:hidden; margin-bottom:20px; animation:fadeUp .5s .2s ease both; }
+  /* Chart */
+  .chart-section { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:22px 24px; display:flex; align-items:center; gap:32px; flex-wrap:wrap; margin-bottom:20px; animation:fadeUp .5s .2s ease both; }
+  .donut-wrap { position:relative; width:200px; height:200px; flex-shrink:0; }
+  .donut-center { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; pointer-events:none; text-align:center; padding:24px; }
+  .donut-center-lbl { font-family:var(--font-mono); font-size:9px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.12em; margin-bottom:3px; }
+  .donut-center-val { font-family:var(--font-display); font-size:12px; font-weight:800; color:var(--text); word-break:break-all; line-height:1.3; }
+  .legend { display:flex; flex-direction:column; gap:14px; flex:1; min-width:200px; }
+  .legend-item { font-size: 13px; } .legend-top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px; }
+  .legend-sym { font-family:var(--font-display); font-size:13px; font-weight:700; }
+  .legend-pct { font-family:var(--font-mono); font-size:11px; color:var(--text-muted); }
+  .legend-bar-bg { height:3px; background:var(--surface2); border-radius:2px; overflow:hidden; }
+  .legend-bar-fill { height:100%; border-radius:2px; transition:width .8s cubic-bezier(.4,0,.2,1); }
+  .legend-amt { font-family:var(--font-mono); font-size:11px; color:var(--text-dim); margin-top:2px; text-align:right; }
+
+  /* Holdings */
+  .holdings-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; overflow:hidden; margin-bottom:20px; animation:fadeUp .5s .24s ease both; }
   .holdings-head { display:grid; grid-template-columns:2.5fr 1.5fr 1fr 1.6fr; gap:8px; padding:10px 18px; background:var(--surface2); border-bottom:1px solid var(--border); }
   .col-head { font-family:var(--font-mono); font-size:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.1em; }
   .col-head.r { text-align:right; }
@@ -137,29 +79,9 @@
   .holding-row:hover { background:var(--surface2); }
   .ticker-sym { font-family:var(--font-display); font-size:15px; font-weight:700; }
   .ticker-name { font-size:11px; color:var(--text-muted); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .h-price,.h-qty { font-family:var(--font-mono); font-size:13px; }
-  .h-qty { color:var(--text-muted); }
+  .h-price,.h-qty { font-family:var(--font-mono); font-size:13px; } .h-qty { color:var(--text-muted); }
   .h-val { text-align:right; display:flex; flex-direction:column; justify-content:center; }
   .h-jpy { font-family:var(--font-mono); font-size:13px; font-weight:500; }
-
-  /* Chart */
-  .chart-section {
-    background:var(--surface); border:1px solid var(--border); border-radius:16px;
-    padding:22px 24px; display:flex; align-items:center; gap:32px; flex-wrap:wrap;
-    margin-bottom:24px; animation:fadeUp .5s .24s ease both;
-  }
-  .donut-wrap { position:relative; width:200px; height:200px; flex-shrink:0; }
-  .donut-center { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; pointer-events:none; text-align:center; padding:24px; }
-  .donut-center-lbl { font-family:var(--font-mono); font-size:9px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.12em; margin-bottom:3px; }
-  .donut-center-val { font-family:var(--font-display); font-size:12px; font-weight:800; color:var(--text); word-break:break-all; line-height:1.3; }
-  .legend { display:flex; flex-direction:column; gap:14px; flex:1; min-width:200px; }
-  .legend-item { font-size: 13px; }
-  .legend-top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px; }
-  .legend-sym { font-family:var(--font-display); font-size:13px; font-weight:700; }
-  .legend-pct { font-family:var(--font-mono); font-size:11px; color:var(--text-muted); }
-  .legend-bar-bg { height:3px; background:var(--surface2); border-radius:2px; overflow:hidden; }
-  .legend-bar-fill { height:100%; border-radius:2px; transition:width .8s cubic-bezier(.4,0,.2,1); }
-  .legend-amt { font-family:var(--font-mono); font-size:11px; color:var(--text-dim); margin-top:2px; text-align:right; }
 
   /* Edit Mode Grid */
   .edit-table-wrap { overflow-x: auto; margin-bottom: 20px; }
@@ -171,7 +93,6 @@
   .del-btn { background: none; border: none; color: var(--text-dim); font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: color 0.2s; height: 100%; }
   .del-btn:hover { color: var(--red); }
   .cat-title { font-family: var(--font-mono); font-size: 12px; color: var(--green); margin-top: 24px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--green-border); padding-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;}
-  .cat-title:first-child { margin-top: 0; }
   .add-btn { background: transparent; border: 1px solid var(--green-border); border-radius: 4px; color: var(--green); font-size: 10px; padding: 4px 10px; cursor: pointer; transition: all 0.2s; font-family: var(--font-body); }
   .add-btn:hover { background: var(--green-dim); }
 
@@ -187,18 +108,13 @@
   .history-table td { padding:10px 13px; color:var(--text-muted); border-bottom:1px solid var(--border); }
   .history-table tr:hover td { background:var(--surface2); }
   .history-table td:last-child, .history-table td:nth-last-child(2) { text-align:right; }
-  .pnl-pos { color:var(--green); }
-  .pnl-neg { color:var(--red); }
-
+  .pnl-pos { color:var(--green); } .pnl-neg { color:var(--red); }
   .spinner { display:inline-block; width:13px; height:13px; border:2px solid rgba(0,0,0,.2); border-top-color:#000; border-radius:50%; animation:spin .7s linear infinite; vertical-align:-2px; }
   .footer { margin-top:36px; text-align:center; font-family:var(--font-mono); font-size:11px; color:var(--text-dim); animation:fadeUp .5s .3s ease both; }
 
-  /* スマホ等ではみ出しを防ぐための2カラムグリッド指定 */
   @media(max-width:580px) {
-    .metrics { grid-template-columns: 1fr 1fr; }
     .holdings-head,.holding-row { grid-template-columns:2fr 1.2fr 0.8fr 1.5fr; }
-    .chart-section { flex-direction:column; }
-    .donut-wrap { margin:0 auto; }
+    .chart-section { flex-direction:column; } .donut-wrap { margin:0 auto; }
   }
 </style>
 </head>
@@ -226,7 +142,6 @@
     <div class="card">
       <div class="card-title">Google Geminiによる全資産の自動取得</div>
       <button class="btn-primary" id="auto-btn" onclick="fetchAuto()">↺ 全銘柄の最新情報を取得</button>
-      <p class="btn-note">API節約のため「1回の通信」ですべての銘柄と為替をまとめて検索・解析します</p>
       <div class="error-box" id="auto-error"></div>
     </div>
 
@@ -253,16 +168,6 @@
       </div>
     </div>
 
-    <div class="holdings-card">
-      <div class="holdings-head">
-        <span class="col-head">銘柄</span>
-        <span class="col-head">現在値</span>
-        <span class="col-head">保有数</span>
-        <span class="col-head r">評価額・損益</span>
-      </div>
-      <div id="holdings-rows"></div>
-    </div>
-
     <div class="chart-section">
       <div class="donut-wrap">
         <canvas id="donutChart"></canvas>
@@ -272,6 +177,16 @@
         </div>
       </div>
       <div class="legend" id="legend"></div>
+    </div>
+
+    <div class="holdings-card">
+      <div class="holdings-head">
+        <span class="col-head">銘柄</span>
+        <span class="col-head">現在値</span>
+        <span class="col-head">保有数</span>
+        <span class="col-head r">評価額・損益</span>
+      </div>
+      <div id="holdings-rows"></div>
     </div>
 
     <div class="history-section" id="history-section">
@@ -296,28 +211,28 @@
     <div class="card">
       <div class="card-title">保有銘柄の編集・手動入力</div>
       <p style="font-size:11px; color:var(--text-muted); margin-bottom:16px;">
-        ※米国株・日本株・投資信託は「取得単価」を入力してください。暗号資産(BTC)は「総取得金額」を入力してください。
+        ※米国株・日本株・投資信託は「取得単価(円)」を入力してください。暗号資産(BTC)は「総取得金額」を入力してください。
       </p>
       <div id="edit-container"></div>
       <button class="btn-primary" onclick="saveManual()" style="margin-top:24px; width:100%; justify-content:center;">✓ 変更を保存して計算</button>
     </div>
   </div>
 
-  <div class="footer">Kazu Portfolio Tracker — Data strictly cached in your browser.</div>
+  <div class="footer">Kazu Portfolio Tracker<br><span style="opacity:0.5;font-size:9px;">Isolated Mode: KAZU_V2</span></div>
 </div>
 
 <script>
+// 絶対に佳英ちゃんのデータと混同しない「Kazu専用」のキャッシュキー
+const DATA_KEY = 'kazu_app_v2_data';
+const HIST_KEY = 'kazu_app_v2_history';
+const API_KEY_KEY = 'portfolio_shared_api_key'; // APIキーだけは共通利用
+
 let portfolioData;
 let chart = null;
 
-// LocalStorageキー
-const DATA_KEY = 'kazu_portfolio_data';
-const HIST_KEY = 'kazu_portfolio_history';
-const API_KEY_KEY = 'gemini_api_key';
+// 古い履歴があれば引き継ぐ（混同防止のため旧kazuキーからのみ）
+let hist = JSON.parse(localStorage.getItem(HIST_KEY) || localStorage.getItem('kazu_portfolio_history') || '[]');
 
-let hist = JSON.parse(localStorage.getItem(HIST_KEY) || '[]');
-
-// 資産カテゴリの定義（表示順とグラフ用カラー）
 const ASSET_CATS = [
   { id: 'US', label: '米国株', color: '#00e5a0' },
   { id: 'JP', label: '日本株', color: '#a78bfa' },
@@ -325,56 +240,38 @@ const ASSET_CATS = [
   { id: 'MF', label: '投資信託', color: '#f5a623' }
 ];
 
-// 初期データのロードとマイグレーション
 function initData() {
-  const saved = localStorage.getItem(DATA_KEY) || localStorage.getItem('kazu-input');
+  const saved = localStorage.getItem(DATA_KEY) || localStorage.getItem('kazu_portfolio_data');
   if (saved) {
     try { 
       const parsed = JSON.parse(saved);
-      const legacyUS = parsed.US || parsed.us || [];
-      const legacyJP = parsed.JP || parsed.jp || [];
-      const legacyCRYPTO = parsed.CRYPTO || parsed.btc || [];
-      const legacyMF = parsed.MF || parsed.mf || [];
-      const legacyFX = parsed.FX || parsed.fx || 158.56;
+      const legacyUS = parsed.US || [];
+      const legacyJP = parsed.JP || [];
+      const legacyCRYPTO = parsed.CRYPTO || [];
+      const legacyMF = parsed.MF || [];
+      const legacyFX = parsed.FX || 158.56;
 
       portfolioData = { US: [], JP: [], CRYPTO: [], MF: [], FX: legacyFX };
 
       portfolioData.US = legacyUS.map(item => ({
-        symbol: item.symbol || item.ticker || '',
-        name: item.name || '米国株',
-        qty: parseFloat(item.qty) || 0,
-        buyPrice: parseFloat(item.buyPrice !== undefined ? item.buyPrice : ((item.cost && item.qty) ? item.cost / item.qty : 0)) || 0,
-        price: parseFloat(item.price) || 0
+        symbol: item.symbol || '', name: item.name || '米国株', qty: parseFloat(item.qty) || 0,
+        buyPrice: parseFloat(item.buyPrice) || 0, price: parseFloat(item.price) || 0
       }));
-
       portfolioData.JP = legacyJP.map(item => ({
-        symbol: item.symbol || item.code || '',
-        name: item.name || '日本株',
-        qty: parseFloat(item.qty) || 0,
-        buyPrice: parseFloat(item.buyPrice !== undefined ? item.buyPrice : ((item.cost && item.qty) ? item.cost / item.qty : 0)) || 0,
-        price: parseFloat(item.price) || 0
+        symbol: item.symbol || '', name: item.name || '日本株', qty: parseFloat(item.qty) || 0,
+        buyPrice: parseFloat(item.buyPrice) || 0, price: parseFloat(item.price) || 0
       }));
-
       portfolioData.CRYPTO = legacyCRYPTO.map(item => ({
-        symbol: item.symbol || 'BTC',
-        name: item.name || 'Bitcoin',
-        qty: parseFloat(item.qty) || 0,
-        totalCost: parseFloat(item.totalCost !== undefined ? item.totalCost : (item.cost || 0)) || 0,
-        price: parseFloat(item.price) || 0
+        symbol: item.symbol || 'BTC', name: item.name || 'Bitcoin', qty: parseFloat(item.qty) || 0,
+        totalCost: parseFloat(item.totalCost) || 0, price: parseFloat(item.price) || 0
       }));
-
       portfolioData.MF = legacyMF.map(item => ({
-        symbol: item.symbol || '信託',
-        name: item.name || '投資信託',
-        qty: parseFloat(item.qty) || 0,
-        buyPrice: parseFloat(item.buyPrice !== undefined ? item.buyPrice : ((item.cost && item.qty) ? item.cost / item.qty : 0)) || 0,
-        price: parseFloat(item.price) || 0
+        symbol: item.symbol || '信託', name: item.name || '投資信託', qty: parseFloat(item.qty) || 0,
+        buyPrice: parseFloat(item.buyPrice) || 0, price: parseFloat(item.price) || 0
       }));
-
-    } catch(e){ console.error("Cache migration failed", e); }
+    } catch(e){}
   }
 
-  // キャッシュがない場合のデフォルトデータ
   if (!portfolioData || (!portfolioData.US.length && !portfolioData.JP.length)) {
     portfolioData = {
       US: [
@@ -390,12 +287,8 @@ function initData() {
         { symbol: '7383', name: 'ネットプロHD', qty: 400, buyPrice: 0, price: 0 },
         { symbol: '2914', name: 'JT', qty: 100, buyPrice: 0, price: 0 }
       ],
-      CRYPTO: [
-        { symbol: 'BTC', name: 'Bitcoin', qty: 0.05, totalCost: 0, price: 0 }
-      ],
-      MF: [
-        { symbol: 'eMAXIS Slim', name: '米国株式(S&P500)', qty: 10000, buyPrice: 0, price: 0 }
-      ],
+      CRYPTO: [ { symbol: 'BTC', name: 'Bitcoin', qty: 0.05, totalCost: 0, price: 0 } ],
+      MF: [ { symbol: 'eMAXIS Slim', name: '米国株式(S&P500)', qty: 10000, buyPrice: 0, price: 0 } ],
       FX: 158.56
     };
   }
@@ -410,309 +303,136 @@ function setMode(m) {
 }
 
 function initHistory() {
-  if (hist.length > 0) {
-    document.getElementById('history-section').style.display = 'block';
-    renderHistoryRows();
-  }
+  if (hist.length > 0) { document.getElementById('history-section').style.display = 'block'; renderHistoryRows(); }
 }
 
 function resetApiKey() {
   const newKey = prompt('Google AI StudioのAPIキーを入力してください。\n（※キーはお使いのブラウザ内のみに保存されます）');
-  if (newKey) {
-    localStorage.setItem(API_KEY_KEY, newKey.trim());
-    alert('APIキーを保存しました。');
-  }
+  if (newKey) { localStorage.setItem(API_KEY_KEY, newKey.trim()); alert('APIキーを保存しました。'); }
 }
 
 function buildPrompt() {
   let instructions = [];
   portfolioData.US.forEach((item, i) => {
-    if(item.symbol === 'AGIX') {
-      instructions.push(`"US_${i}": 米国ETF「AGIX」(KraneShares Artificial Intelligence & Technology ETF)の最新1株あたり価格(USD)`);
-    } else {
-      instructions.push(`"US_${i}": 米国株「${item.symbol}」の最新1株あたり価格(USD)`);
-    }
+    if(item.symbol === 'AGIX') { instructions.push(`"US_${i}": 米国ETF「AGIX」(KraneShares Artificial Intelligence & Technology ETF)の最新1株あたり価格(USD)`); }
+    else { instructions.push(`"US_${i}": 米国株「${item.symbol}」の最新1株あたり価格(USD)`); }
   });
   portfolioData.JP.forEach((item, i) => instructions.push(`"JP_${i}": 日本株コード「${item.symbol}」の最新株価(JPY)`));
   portfolioData.CRYPTO.forEach((item, i) => instructions.push(`"CR_${i}": 暗号資産「${item.symbol}」の最新価格(JPY)`));
   portfolioData.MF.forEach((item, i) => instructions.push(`"MF_${i}": 投資信託「${item.name}」の最新基準価額（1万口あたりの日本円価格）`));
-
-  return `あなたは優秀な金融データ抽出システムです。Google検索ツールを使用して、指定された資産の最新価格情報を検索し、以下の指示に従った純粋なJSONオブジェクトのみを出力してください。
-Markdown記法（\`\`\`json などの囲み）や、前後の挨拶、解説、言い訳の文章は一切含めてはいけません。
-
-{
-  "US": { ${portfolioData.US.map((_, i) => `"US_${i}": 数値`).join(', ')} },
-  "JP": { ${portfolioData.JP.map((_, i) => `"JP_${i}": 数値`).join(', ')} },
-  "CRYPTO": { ${portfolioData.CRYPTO.map((_, i) => `"CR_${i}": 数値`).join(', ')} },
-  "MF": { ${portfolioData.MF.map((_, i) => `"MF_${i}": 数値`).join(', ')} },
-  "USDJPY": 最新の米ドル建て日本円為替レート数値
-}
-
-【各キーに対応する検索項目】
-${instructions.join('\n')}`;
+  return `あなたは優秀な金融データ抽出システムです。Google検索ツールを使用して、指定された資産の最新価格情報を検索し、以下の指示に従った純粋なJSONオブジェクトのみを出力してください。\nMarkdown記法や挨拶は一切含めてはいけません。\n{\n  "US": { ${portfolioData.US.map((_, i) => `"US_${i}": 数値`).join(', ')} },\n  "JP": { ${portfolioData.JP.map((_, i) => `"JP_${i}": 数値`).join(', ')} },\n  "CRYPTO": { ${portfolioData.CRYPTO.map((_, i) => `"CR_${i}": 数値`).join(', ')} },\n  "MF": { ${portfolioData.MF.map((_, i) => `"MF_${i}": 数値`).join(', ')} },\n  "USDJPY": 最新の米ドル建て日本円為替レート数値\n}\n\n【各キーに対応する検索項目】\n${instructions.join('\n')}`;
 }
 
 async function fetchAuto() {
-  const btn = document.getElementById('auto-btn');
-  const errBox = document.getElementById('auto-error');
-  btn.disabled = true;
-  errBox.style.display = 'none';
+  const btn = document.getElementById('auto-btn'); const errBox = document.getElementById('auto-error');
+  btn.disabled = true; errBox.style.display = 'none';
 
-  let apiKey = localStorage.getItem(API_KEY_KEY);
+  let apiKey = localStorage.getItem(API_KEY_KEY) || localStorage.getItem('gemini_api_key');
   if (!apiKey) {
     apiKey = prompt('自動取得にはGoogle AI StudioのAPIキーが必要です。\nAPIキーを入力してください。');
     if (!apiKey) { btn.disabled = false; return; }
     localStorage.setItem(API_KEY_KEY, apiKey.trim());
+  } else {
+    localStorage.setItem(API_KEY_KEY, apiKey); // 共有キーに昇格
   }
 
   btn.innerHTML = '<span class="spinner"></span> Geminiが全資産の最新値を同時検索中...';
-
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey.trim()}`;
-  const payload = {
-    contents: [{ parts: [{ text: buildPrompt() }] }],
-    generationConfig: { temperature: 0 },
-    tools: [{ googleSearch: {} }]
-  };
+  const payload = { contents: [{ parts: [{ text: buildPrompt() }] }], generationConfig: { temperature: 0 }, tools: [{ googleSearch: {} }] };
 
   try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-
+    const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
     const data = await res.json();
-
-    if (!res.ok || data.error) {
-      const errMsg = data.error ? data.error.message : `HTTP ${res.status}`;
-      if (res.status === 400 || res.status === 403) {
-        localStorage.removeItem(API_KEY_KEY);
-        throw new Error(`APIキーのエラーまたは制限です：\n${errMsg}`);
-      }
-      throw new Error(`APIサーバーからのエラー：\n${errMsg}`);
-    }
-
-    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-      throw new Error('Geminiから有効な応答がありませんでした。');
-    }
-
+    if (!res.ok || data.error) throw new Error(data.error ? data.error.message : `HTTP ${res.status}`);
     let text = data.candidates[0].content.parts[0].text;
     const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error(`AIの応答からデータをパースできませんでした。\n【AIの応答内容】\n${text}`);
+    if (!jsonMatch) throw new Error(`AIの応答からデータをパースできませんでした。`);
     
     const got = JSON.parse(jsonMatch[0]);
-
-    if (got.US) {
-      portfolioData.US.forEach((item, i) => { if (got.US[`US_${i}`] !== undefined) item.price = parseFloat(got.US[`US_${i}`]) || 0; });
-    }
-    if (got.JP) {
-      portfolioData.JP.forEach((item, i) => { if (got.JP[`JP_${i}`] !== undefined) item.price = parseFloat(got.JP[`JP_${i}`]) || 0; });
-    }
-    if (got.CRYPTO) {
-      portfolioData.CRYPTO.forEach((item, i) => { if (got.CRYPTO[`CR_${i}`] !== undefined) item.price = parseFloat(got.CRYPTO[`CR_${i}`]) || 0; });
-    }
-    if (got.MF) {
-      portfolioData.MF.forEach((item, i) => { if (got.MF[`MF_${i}`] !== undefined) item.price = parseFloat(got.MF[`MF_${i}`]) || 0; });
-    }
+    if (got.US) { portfolioData.US.forEach((item, i) => { if (got.US[`US_${i}`] !== undefined) item.price = parseFloat(got.US[`US_${i}`]) || 0; }); }
+    if (got.JP) { portfolioData.JP.forEach((item, i) => { if (got.JP[`JP_${i}`] !== undefined) item.price = parseFloat(got.JP[`JP_${i}`]) || 0; }); }
+    if (got.CRYPTO) { portfolioData.CRYPTO.forEach((item, i) => { if (got.CRYPTO[`CR_${i}`] !== undefined) item.price = parseFloat(got.CRYPTO[`CR_${i}`]) || 0; }); }
+    if (got.MF) { portfolioData.MF.forEach((item, i) => { if (got.MF[`MF_${i}`] !== undefined) item.price = parseFloat(got.MF[`MF_${i}`]) || 0; }); }
     if (got.USDJPY) portfolioData.FX = parseFloat(got.USDJPY) || portfolioData.FX;
 
     localStorage.setItem(DATA_KEY, JSON.stringify(portfolioData));
     renderPortfolio('Gemini自動取得');
-
-  } catch(e) {
-    errBox.style.display = 'block';
-    errBox.textContent = '⚠ エラーが発生しました\n' + e.message;
-  }
-
-  btn.disabled = false;
-  btn.innerHTML = '↺ 全銘柄の最新情報を取得';
+  } catch(e) { errBox.style.display = 'block'; errBox.textContent = '⚠ エラー\n' + e.message; }
+  btn.disabled = false; btn.innerHTML = '↺ 全銘柄の最新情報を取得';
 }
 
 function renderEditRows() {
-  const container = document.getElementById('edit-container');
-  let html = '';
+  const container = document.getElementById('edit-container'); let html = '';
   const categories = [
-    { id: 'US', title: '米国株 (USD建て単価を入力)' },
-    { id: 'JP', title: '日本株 (円建て単価を入力)' },
-    { id: 'CRYPTO', title: '暗号資産 (※BTCは総取得金額を直接入力)' },
-    { id: 'MF', title: '投資信託 (円建て単価を入力 ※現在値は1万口あたり換算)' }
+    { id: 'US', title: '米国株 (円建ての取得単価を入力)' }, { id: 'JP', title: '日本株 (円建ての取得単価を入力)' },
+    { id: 'CRYPTO', title: '暗号資産 (※BTCは総取得金額を直接入力)' }, { id: 'MF', title: '投資信託 (円建て単価を入力 ※現在値は1万口あたり換算)' }
   ];
 
   categories.forEach(c => {
-    html += `<div class="cat-title"><span>${c.title}</span> <button class="add-btn" onclick="addRow('${c.id}')">＋ 追加</button></div>`;
-    html += `<div class="edit-table-wrap"><div class="edit-table">`;
-    html += `<div class="edit-row header">
-      <div>シンボル/コード</div><div>名称</div><div>保有数</div><div>${c.id==='CRYPTO'?'総取得金額(円)':'取得単価'}</div><div>現在値</div><div></div>
-    </div>`;
-    
-    if (portfolioData[c.id].length === 0) {
-      html += `<div style="color:var(--text-dim); font-size:12px; padding: 10px 0;">銘柄が登録されていません</div>`;
-    }
-
+    html += `<div class="cat-title"><span>${c.title}</span> <button class="add-btn" onclick="addRow('${c.id}')">＋ 追加</button></div><div class="edit-table-wrap"><div class="edit-table"><div class="edit-row header"><div>シンボル/コード</div><div>名称</div><div>保有数</div><div>${c.id==='CRYPTO'?'総取得金額(円)':'取得単価(円)'}</div><div>現在値</div><div></div></div>`;
+    if (portfolioData[c.id].length === 0) html += `<div style="color:var(--text-dim); font-size:12px; padding: 10px 0;">銘柄が登録されていません</div>`;
     portfolioData[c.id].forEach((item, index) => {
-      const sSym = (item.symbol || '').replace(/"/g, '&quot;');
-      const sName = (item.name || '').replace(/"/g, '&quot;');
+      const sSym = (item.symbol || '').replace(/"/g, '&quot;'); const sName = (item.name || '').replace(/"/g, '&quot;');
       const costValue = c.id === 'CRYPTO' ? (item.totalCost || 0) : (item.buyPrice || 0);
-
-      html += `<div class="edit-row">
-        <input type="text" placeholder="シンボル" value="${sSym}" onchange="updateData('${c.id}', ${index}, 'symbol', this.value)">
-        <input type="text" placeholder="名称" value="${sName}" onchange="updateData('${c.id}', ${index}, 'name', this.value)">
-        <input type="number" step="any" placeholder="保有数" value="${item.qty || 0}" onchange="updateData('${c.id}', ${index}, 'qty', this.value)">
-        <input type="number" step="any" placeholder="金額" value="${costValue}" onchange="updateData('${c.id}', ${index}, '${c.id==='CRYPTO'?'totalCost':'buyPrice'}', this.value)">
-        <input type="number" step="any" placeholder="現在値" value="${item.price || 0}" onchange="updateData('${c.id}', ${index}, 'price', this.value)">
-        <button class="del-btn" onclick="deleteRow('${c.id}', ${index})">✕</button>
-      </div>`;
+      html += `<div class="edit-row"><input type="text" placeholder="シンボル" value="${sSym}" onchange="updateData('${c.id}', ${index}, 'symbol', this.value)"><input type="text" placeholder="名称" value="${sName}" onchange="updateData('${c.id}', ${index}, 'name', this.value)"><input type="number" step="any" placeholder="保有数" value="${item.qty || 0}" onchange="updateData('${c.id}', ${index}, 'qty', this.value)"><input type="number" step="any" placeholder="金額" value="${costValue}" onchange="updateData('${c.id}', ${index}, '${c.id==='CRYPTO'?'totalCost':'buyPrice'}', this.value)"><input type="number" step="any" placeholder="現在値" value="${item.price || 0}" onchange="updateData('${c.id}', ${index}, 'price', this.value)"><button class="del-btn" onclick="deleteRow('${c.id}', ${index})">✕</button></div>`;
     });
     html += `</div></div>`;
   });
-  
-  html += `<div class="cat-title">基準為替レート (USD/JPY)</div>
-    <div class="edit-table-wrap"><div class="edit-table" style="min-width: unset;">
-      <div class="edit-row" style="grid-template-columns: 200px; max-width:200px">
-        <input type="number" step="any" placeholder="ドル円" value="${portfolioData.FX}" onchange="portfolioData.FX = parseFloat(this.value) || 150">
-      </div>
-    </div></div>`;
-
+  html += `<div class="cat-title">基準為替レート (USD/JPY)</div><div class="edit-table-wrap"><div class="edit-table" style="min-width: unset;"><div class="edit-row" style="grid-template-columns: 200px; max-width:200px"><input type="number" step="any" placeholder="ドル円" value="${portfolioData.FX}" onchange="portfolioData.FX = parseFloat(this.value) || 150"></div></div></div>`;
   container.innerHTML = html;
 }
 
-function updateData(cat, index, field, value) {
-  let val = value;
-  if (field === 'qty' || field === 'buyPrice' || field === 'totalCost' || field === 'price') val = parseFloat(value) || 0;
-  portfolioData[cat][index][field] = val;
-}
-
-function deleteRow(cat, index) {
-  if(confirm('この銘柄を削除しますか？')) {
-    portfolioData[cat].splice(index, 1);
-    renderEditRows();
-  }
-}
-
-function addRow(cat) {
-  if(cat === 'CRYPTO') {
-    portfolioData[cat].push({ symbol: '', name: '', qty: 0, totalCost: 0, price: 0 });
-  } else {
-    portfolioData[cat].push({ symbol: '', name: '', qty: 0, buyPrice: 0, price: 0 });
-  }
-  renderEditRows();
-}
-
-function saveManual() {
-  localStorage.setItem(DATA_KEY, JSON.stringify(portfolioData));
-  renderPortfolio('手動更新');
-  setMode('auto');
-}
+function updateData(cat, index, field, value) { let val = value; if (field === 'qty' || field === 'buyPrice' || field === 'totalCost' || field === 'price') val = parseFloat(value) || 0; portfolioData[cat][index][field] = val; }
+function deleteRow(cat, index) { if(confirm('この銘柄を削除しますか？')) { portfolioData[cat].splice(index, 1); renderEditRows(); } }
+function addRow(cat) { if(cat === 'CRYPTO') { portfolioData[cat].push({ symbol: '', name: '', qty: 0, totalCost: 0, price: 0 }); } else { portfolioData[cat].push({ symbol: '', name: '', qty: 0, buyPrice: 0, price: 0 }); } renderEditRows(); }
+function saveManual() { localStorage.setItem(DATA_KEY, JSON.stringify(portfolioData)); renderPortfolio('手動更新'); setMode('auto'); }
 
 function fmt(n) { return Math.round(n).toLocaleString('ja-JP'); }
 function fmtF(n) { return n.toLocaleString('ja-JP', {minimumFractionDigits: 2, maximumFractionDigits: 2}); }
 
 function renderPortfolio(srcLabel) {
-  let totalJPY = 0;
-  let totalCost = 0;
-  let rowsHtml = '';
-  
+  let totalJPY = 0; let totalCost = 0; let rowsHtml = '';
   let catTotals = { US: 0, JP: 0, CRYPTO: 0, MF: 0 };
-  let catCosts = { US: 0, JP: 0, CRYPTO: 0, MF: 0 };
-
+  
   ASSET_CATS.forEach(cat => {
     const list = portfolioData[cat.id] || [];
     if (list.length > 0) {
       rowsHtml += `<div class="category-divider" style="color:${cat.color};">${cat.label}</div>`;
-      
       list.forEach(item => {
-        let valJPY = 0;
-        let costJPY = 0;
-        let priceDisplay = '';
+        let valJPY = 0; let costJPY = 0; let priceDisplay = '';
+        if (cat.id === 'US') { valJPY = item.price * item.qty * portfolioData.FX; costJPY = item.buyPrice * item.qty; priceDisplay = `$${fmtF(item.price)}`; }
+        else if (cat.id === 'JP') { valJPY = item.price * item.qty; costJPY = item.buyPrice * item.qty; priceDisplay = `¥${fmt(item.price)}`; }
+        else if (cat.id === 'CRYPTO') { valJPY = item.price * item.qty; costJPY = item.totalCost || 0; priceDisplay = `¥${fmt(item.price)}`; }
+        else if (cat.id === 'MF') { valJPY = (item.price / 10000) * item.qty; costJPY = (item.buyPrice / 10000) * item.qty; priceDisplay = `¥${fmt(item.price)}`; }
 
-        if (cat.id === 'US') {
-          valJPY = item.price * item.qty * portfolioData.FX;
-          costJPY = item.buyPrice * item.qty * portfolioData.FX;
-          priceDisplay = `$${fmtF(item.price)}`;
-        } else if (cat.id === 'JP') {
-          valJPY = item.price * item.qty;
-          costJPY = item.buyPrice * item.qty;
-          priceDisplay = `¥${fmt(item.price)}`;
-        } else if (cat.id === 'CRYPTO') {
-          valJPY = item.price * item.qty;
-          costJPY = item.totalCost || 0;
-          priceDisplay = `¥${fmt(item.price)}`;
-        } else if (cat.id === 'MF') {
-          valJPY = (item.price / 10000) * item.qty;
-          costJPY = (item.buyPrice / 10000) * item.qty;
-          priceDisplay = `¥${fmt(item.price)}`;
-        }
+        totalJPY += valJPY; totalCost += costJPY; catTotals[cat.id] += valJPY;
+        const itemPnl = valJPY - costJPY; const posItem = itemPnl >= 0;
+        const itemPnlColor = posItem ? 'var(--blue)' : 'var(--red)'; const itemPnlStr = (posItem ? '+' : '') + fmt(itemPnl) + ' 円';
 
-        totalJPY += valJPY;
-        totalCost += costJPY;
-        catTotals[cat.id] += valJPY;
-        catCosts[cat.id] += costJPY;
-
-        // 個別銘柄の損益計算
-        const itemPnl = valJPY - costJPY;
-        const posItem = itemPnl >= 0;
-        const itemPnlColor = posItem ? 'var(--blue)' : 'var(--red)';
-        const itemPnlStr = (posItem ? '+' : '') + fmt(itemPnl) + ' 円';
-
-        rowsHtml += `
-          <div class="holding-row">
-            <div style="display:flex;align-items:center;gap:10px">
-              <span style="width:6px;height:6px;border-radius:50%;background:${cat.color};"></span>
-              <div style="min-width:0">
-                <div class="ticker-sym">${item.symbol || '---'}</div>
-                <div class="ticker-name">${item.name || '---'}</div>
-              </div>
-            </div>
-            <div class="h-price">${priceDisplay}</div>
-            <div class="h-qty">${item.qty}</div>
-            <div class="h-val">
-              <div class="h-jpy">¥${fmt(valJPY)}</div>
-              <div style="color:${itemPnlColor}; font-size:11px; font-family:var(--font-mono); margin-top:2px;">${itemPnlStr}</div>
-            </div>
-          </div>`;
+        rowsHtml += `<div class="holding-row"><div style="display:flex;align-items:center;gap:10px"><span style="width:6px;height:6px;border-radius:50%;background:${cat.color};"></span><div style="min-width:0"><div class="ticker-sym">${item.symbol || '---'}</div><div class="ticker-name">${item.name || '---'}</div></div></div><div class="h-price">${priceDisplay}</div><div class="h-qty">${item.qty}</div><div class="h-val"><div class="h-jpy">¥${fmt(valJPY)}</div><div style="color:${itemPnlColor}; font-size:11px; font-family:var(--font-mono); margin-top:2px;">${itemPnlStr}</div></div></div>`;
       });
     }
   });
 
-  const pnl = totalJPY - totalCost;
-  const pct = totalCost > 0 ? (pnl/totalCost)*100 : 0;
-  const pos = pnl >= 0;
-  const now = new Date();
-
+  const pnl = totalJPY - totalCost; const pct = totalCost > 0 ? (pnl/totalCost)*100 : 0; const pos = pnl >= 0; const now = new Date();
   document.getElementById('stamp').textContent = srcLabel + ' — ' + now.toLocaleDateString('ja-JP') + ' ' + now.toLocaleTimeString('ja-JP');
   document.getElementById('m-total').textContent = '¥' + fmt(totalJPY);
   document.getElementById('m-cost').textContent = '¥' + fmt(totalCost);
   document.getElementById('m-fx').textContent = portfolioData.FX.toFixed(2) + ' 円';
   document.getElementById('m-fx-src').textContent = srcLabel;
 
-  const pnlEl = document.getElementById('m-pnl');
-  const pctEl = document.getElementById('m-pct');
-  pnlEl.textContent = (pos?'+':'') + fmt(pnl) + ' 円';
-  pnlEl.className   = 'metric-value ' + (pos?'pos':'neg');
-  pctEl.textContent = (pos?'+':'') + pct.toFixed(2) + '%';
-  pctEl.className   = 'metric-sub ' + (pos?'pos':'neg');
+  const pnlEl = document.getElementById('m-pnl'); const pctEl = document.getElementById('m-pct');
+  pnlEl.textContent = (pos?'+':'') + fmt(pnl) + ' 円'; pnlEl.className = 'metric-value ' + (pos?'pos':'neg');
+  pctEl.textContent = (pos?'+':'') + pct.toFixed(2) + '%'; pctEl.className = 'metric-sub ' + (pos?'pos':'neg');
 
   document.getElementById('holdings-rows').innerHTML = rowsHtml;
   document.getElementById('donut-val').textContent = '¥' + fmt(totalJPY);
 
-  const chartData = ASSET_CATS.map(cat => ({
-    label: cat.label,
-    valJPY: catTotals[cat.id],
-    color: cat.color
-  }));
-
+  const chartData = ASSET_CATS.map(cat => ({ label: cat.label, valJPY: catTotals[cat.id], color: cat.color }));
   renderDonut(chartData);
-
   document.getElementById('legend').innerHTML = chartData.map(r => {
     const p = totalJPY > 0 ? ((r.valJPY/totalJPY)*100).toFixed(1) : 0;
-    return `<div class="legend-item">
-      <div class="legend-top">
-        <span class="legend-sym" style="color:${r.color}">${r.label}</span>
-        <span class="legend-pct">${p}%</span>
-      </div>
-      <div class="legend-bar-bg"><div class="legend-bar-fill" style="width:${p}%;background:${r.color}"></div></div>
-      <div class="legend-amt">¥${fmt(r.valJPY)}</div>
-    </div>`;
+    return `<div class="legend-item"><div class="legend-top"><span class="legend-sym" style="color:${r.color}">${r.label}</span><span class="legend-pct">${p}%</span></div><div class="legend-bar-bg"><div class="legend-bar-fill" style="width:${p}%;background:${r.color}"></div></div><div class="legend-amt">¥${fmt(r.valJPY)}</div></div>`;
   }).join('');
 
   addHistory(totalJPY, totalCost, portfolioData.FX);
@@ -720,30 +440,16 @@ function renderPortfolio(srcLabel) {
 
 function renderDonut(chartData) {
   if (chart) { chart.destroy(); chart = null; }
-  chart = new Chart(document.getElementById('donutChart'), {
-    type:'doughnut',
-    data:{
-      labels: chartData.map(r => r.label),
-      datasets:[{data:chartData.map(r => r.valJPY), backgroundColor:chartData.map(r => r.color), borderWidth:0, hoverOffset:5}]
-    },
-    options:{responsive:true, maintainAspectRatio:true, cutout:'72%',
-      plugins:{legend:{display:false},tooltip:{enabled:false}},
-      animation:{animateRotate:true,duration:800}}
-  });
+  chart = new Chart(document.getElementById('donutChart'), { type:'doughnut', data:{ labels: chartData.map(r => r.label), datasets:[{data:chartData.map(r => r.valJPY), backgroundColor:chartData.map(r => r.color), borderWidth:0, hoverOffset:5}] }, options:{responsive:true, maintainAspectRatio:true, cutout:'72%', plugins:{legend:{display:false},tooltip:{enabled:false}}, animation:{animateRotate:true,duration:800}} });
 }
 
 function addHistory(totalJPY, totalCost, fx) {
-  const now = new Date();
-  const pnl = totalJPY - totalCost;
-  const timeStr = now.toLocaleDateString('ja-JP',{month:'2-digit',day:'2-digit'}) + ' '
-                + now.toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});
-  
+  const now = new Date(); const pnl = totalJPY - totalCost;
+  const timeStr = now.toLocaleDateString('ja-JP',{month:'2-digit',day:'2-digit'}) + ' ' + now.toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});
   if (hist.length > 0 && hist[0].time.startsWith(timeStr.split(' ')[0]) && hist[0].totalJPY === totalJPY) return; 
-
   hist.unshift({ time: timeStr, totalJPY, totalCost, pnl, fx });
   if (hist.length > 20) hist.pop();
   localStorage.setItem(HIST_KEY, JSON.stringify(hist));
-  
   document.getElementById('history-section').style.display = 'block';
   renderHistoryRows();
 }
@@ -751,22 +457,12 @@ function addHistory(totalJPY, totalCost, fx) {
 function renderHistoryRows() {
   document.getElementById('history-body').innerHTML = hist.map(h => {
     const pos = h.pnl >= 0;
-    return `<tr>
-      <td style="color:var(--text-dim);white-space:nowrap">${h.time}</td>
-      <td>¥${fmt(h.totalJPY)}</td>
-      <td>¥${fmt(h.totalCost)}</td>
-      <td class="${pos?'pnl-pos':'pnl-neg'}">${pos?'+':''}${fmt(h.pnl)} 円</td>
-      <td>${h.fx.toFixed(2)}</td>
-    </tr>`;
+    return `<tr><td style="color:var(--text-dim);white-space:nowrap">${h.time}</td><td>¥${fmt(h.totalJPY)}</td><td>¥${fmt(h.totalCost)}</td><td class="${pos?'pnl-pos':'pnl-neg'}">${pos?'+':''}${fmt(h.pnl)} 円</td><td>${h.fx.toFixed(2)}</td></tr>`;
   }).join('');
 }
 
 function clearHistory() {
-  if(confirm('取得履歴をすべて削除しますか？')) {
-    hist = [];
-    localStorage.removeItem(HIST_KEY);
-    document.getElementById('history-body').innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-dim);padding:16px">まだ記録がありません</td></tr>';
-  }
+  if(confirm('取得履歴をすべて削除しますか？')) { hist = []; localStorage.removeItem(HIST_KEY); document.getElementById('history-body').innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-dim);padding:16px">まだ記録がありません</td></tr>'; }
 }
 
 initData();
